@@ -1,21 +1,13 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import "./index.css";
 
-const Form = ({ onCreate }) => {
-  const [success, setSuccess] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
-    hospitalName: "",
-    date: "",
-    billAmount: "",
-  });
+const FormEdit = ({ onEdit }) => {
+  const location = useLocation();
+  const [formData, setFormData] = useState(location.state);
+
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -24,35 +16,18 @@ const Form = ({ onCreate }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onCreate(formData);
-    setSuccess(true);
-    setFormData({
-      firstName: "",
-      lastName: "",
-      address: "",
-      city: "",
-      state: "",
-      zip: "",
-      hospitalName: "",
-      date: "",
-      billAmount: "",
-    });
-    setTimeout(() => {
-      setSuccess(false);
-    }, 4000);
+    onEdit(formData);
+    navigate("/");
+  };
+
+  const handleCancelClick = () => {
+    navigate("/");
   };
 
   return (
     <div style={{ marginTop: "2rem" }}>
-      {success ? (
-        <div className="alert alert-success" role="alert">
-          Success!!!
-        </div>
-      ) : null}
-      <NavLink to="/" className="btn btn-danger">
-        Back to Home
-      </NavLink>
       <form onSubmit={handleSubmit} className="row g-3">
+        <h1>Edit</h1>
         <div className="col-md-6">
           <label htmlFor="first-name" className="form-label">
             First Name<span className="required-field"></span>
@@ -181,12 +156,19 @@ const Form = ({ onCreate }) => {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Submit
+        <button type="submit" className="btn btn-success">
+          Save
+        </button>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={handleCancelClick}
+        >
+          Cancel
         </button>
       </form>
     </div>
   );
 };
 
-export default Form;
+export default FormEdit;
